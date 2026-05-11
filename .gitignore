@@ -1,0 +1,15 @@
+# IDE files
+.idea
+.vscode
+
+# system files
+.DS_Store
+._*
+
+# devenv
+.devenv*
+.direnv
+devenv.local.nix
+
+# build
+/result

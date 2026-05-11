@@ -1,0 +1,45 @@
+# Configuration for treefmt.
+#
+# Program: https://treefmt.com/latest/
+# ==============================================================================
+excludes = [
+  # IDE files
+  ".idea",
+  ".vscode",
+
+  # system files
+  ".DS_Store",
+  "._*",
+
+  # devenv
+  ".devenv*",
+  ".direnv",
+  "devenv.local.nix",
+
+  # tooling
+  ".envrc",
+  ".editorconfig",
+  ".git*",
+  "*.lock",
+
+  # unsupported
+  "*.md",
+]
+
+[formatter.nixfmt]
+command = "nixfmt"
+excludes = []
+includes = ["*.nix"]
+options = []
+
+[formatter.yq]
+command = "yq"
+options = ["--prettyPrint", "--indent=2"]
+excludes = []
+includes = ["*.json", "*.yaml", "*.yml"]
+
+[formatter.tombi]
+command = "tombi"
+options = ["format"]
+excludes = []
+includes = ["*.toml"]
