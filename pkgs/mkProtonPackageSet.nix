@@ -14,7 +14,7 @@
   newScope, # inherit from parent scope
 }:
 let
-  manifestsLib = import ../lib/nix/nix-proton-manifests.nix { inherit lib; };
+  manifestsLib = pkgs.callPackage ../lib/nix/nix-proton-manifests.nix { };
   system = pkgs.stdenv.hostPlatform.system;
 in
 manifestSrc: init:
@@ -22,23 +22,23 @@ lib.makeScope newScope (
   self:
   let
     manifest = manifestsLib.load manifestSrc;
-    versions = manifest.version;
+    supportedVersions = manifestsLib.versionsInManifestForSystem manifest system;
 
-    # versionsForSystem :: string -> attrset
-    versionsForSystem =
-      system: lib.attrsets.filterAttrs (_: verInfo: verInfo.download ? ${system}) versions;
+    createProtonPackage =
+      verName: verInfo: variantName: variantDownload:
+      self.mkProton {
+        version = verName;
+        variant = variantName;
+        download = variantDownload;
+      };
 
     # mkProtonPackage :: string -> attrset -> attrset of derivation
-    mkProtonPackagesForVersion =
+    createProtonVersions =
       verName: verInfo:
-      lib.attrsets.mapAttrs' (variant: dlInfo: {
-        name = variant;
-        value = self.mkProton {
-          version = verName;
-          variant = variant;
-          download = dlInfo;
-        };
-      }) verInfo.download.${system};
+      let
+        variants = manifestsLib.variantsInVersionForSystem verInfo system;
+      in
+      manifestsLib.forEachVariant variants (createProtonPackage verName verInfo);
 
     # pivotVariants :: attrset -> derivation & attrset
     # Returns the default variant with all other variants accessible as attributes.
@@ -51,8 +51,7 @@ lib.makeScope newScope (
       defaultVariant // otherVariants;
   in
   (init self)
-  // lib.attrsets.mapAttrs' (verName: verInfo: {
-    name = verName;
-    value = pivotVariants (mkProtonPackagesForVersion verName verInfo);
-  }) (versionsForSystem system)
+  // lib.attrsets.mapAttrs (
+    verName: verInfo: pivotVariants (createProtonVersions verName verInfo)
+  ) supportedVersions
 )
