@@ -3,16 +3,15 @@
   lib,
   newScope, # inherit from parent scope
 
-  extendWithProtonPackages,
+  # From nix-proton:
+  makeProtonPackageSet,
 
+  # Overrideable options:
   manifest ? ./manifest.toml,
   suffix ? "",
 }:
-extendWithProtonPackages (
-  lib.makeScope newScope (self: {
-    manifest = manifest;
-    makeProton = self.callPackage ./makeProton.nix {
-      suffix = if suffix == "" then "" else "-${suffix}";
-    };
-  })
-)
+makeProtonPackageSet manifest (self: {
+  makeProton = self.callPackage ./makeProton.nix {
+    suffix = if suffix == "" then "" else "-${suffix}";
+  };
+})
