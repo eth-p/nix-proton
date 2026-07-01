@@ -1,52 +1,29 @@
-# Fetcher for downloading prebuilt binary packages from GitHub.
+# Post-build hook for rewriting the internal tool name and display name
+# specified inside the compatibilitytool.vdf file.
+#
+# To use the hook, add it to `nativeBuildInputs` and set the following
+# attributes inside the derivation:
+#
+#   {
+#     protonDisplayName = "Some Proton";
+#     protonToolNAme = "some-proton";
+#   }
 {
   lib,
   makeSetupHook,
   writeScript,
 
+  # Programs used by the hook:
   jq,
 
   # From nix-proton:
   nixProtonTools,
 }:
-makeSetupHook
-  {
-    name = "change-proton-name-hook";
+makeSetupHook {
+  name = "change-proton-name-hook";
 
-    substitutions = {
-      vdfConvert = lib.getExe nixProtonTools.vdf-convert;
-      jq = lib.getExe jq;
-    };
-  }
-  (
-    writeScript "change-proton-name-hook.sh" ''
-      # shellcheck disable=SC2016
-
-      changeProtonToolName() {
-        @vdfConvert@ to-json <"$1" |
-          @jq@ --arg name "$2" '.compatibilitytools.compat_tools | to_entries | .[0].key = $name | from_entries' |
-          @vdfConvert@ from-json >"$1.new"
-
-        mv "$1.new" "$1"
-      }
-
-      changeProtonDisplayName() {
-        @vdfConvert@ to-json <"$1" |
-          @jq@ --arg name "$2" '.compatibilitytools.compat_tools |= (. | to_entries | .[0].value.display_name = $name | from_entries)' |
-          @vdfConvert@ from-json >"$1.new"
-
-        mv "$1.new" "$1"
-      }
-
-      _runProtonNameHooks() {
-        if [[ -n "''${protonDisplayName:-}" ]]; then
-          changeProtonDisplayName "proton/compatibilitytool.vdf" "$protonDisplayName"
-        fi
-        if [[ -n "''${protonToolName:-}" ]]; then
-          changeProtonToolName "proton/compatibilitytool.vdf" "$protonToolName"
-        fi
-      }
-
-      appendToVar postBuildHooks _runProtonNameHooks
-    ''
-  )
+  substitutions = {
+    vdfConvert = lib.getExe nixProtonTools.vdf-convert;
+    jq = lib.getExe jq;
+  };
+} ./changeProtonName.sh

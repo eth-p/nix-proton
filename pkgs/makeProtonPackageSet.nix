@@ -26,23 +26,23 @@ manifestFile: init:
       createProtonPackage =
         verName: verInfo: download:
         lib.nameValuePair verInfo.package (
-          (self.makeProton {
+          self.makeProton {
             version = verName;
             download = download;
-          }).overrideAttrs
-            {
-              protonDisplayName = "${manifest.proton.name} ${verName}";
-            }
+            protonDisplayName = "${manifest.proton.name} ${verName}";
+          }
         );
 
       protonPackages = manifestsLib.forEachDownload' manifest system createProtonPackage;
+      latestPackage = protonPackages."${manifest.version.${manifest.proton.latest}.package}";
     in
     protonPackages
     // {
       latest =
-        protonPackages."${manifest.version.${manifest.proton.latest}.package}".overrideAttrs
+        latestPackage.overrideAttrs
           (oldAttrs: {
             protonDirName = "${manifest.proton.variant}-latest";
+            protonToolName = "${manifest.proton.variant}-latest";
             protonDisplayName = "${manifest.proton.name} Latest";
           });
     }

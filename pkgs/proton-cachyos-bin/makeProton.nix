@@ -13,6 +13,9 @@
 {
   version,
   download,
+
+  protonDisplayName ? null,
+  protonToolName ? null,
 }:
 stdenvNoCC.mkDerivation {
   pname = "proton-cachyos-bin${suffix}";
@@ -51,6 +54,9 @@ stdenvNoCC.mkDerivation {
 
     runHook postInstall
   '';
+
+  # Options for changeProtonName hook:
+  inherit protonDisplayName;
 
   # Proton is expected to run inside the Steam Linux Runtime.
   # Avoid patching/fixuping anything extracted from the tarball.
