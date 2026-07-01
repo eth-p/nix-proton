@@ -1,0 +1,28 @@
+[proton]
+name = "Proton-CachyOS (x86_64_v3)"
+variant = "proton-cachyos-x86-64-v3"
+latest = "11.0-20260602"
+
+[version."11.0-20260602"]
+package = "11-0-20260602"
+
+[version."11.0-20260602".download.x86_64-linux]
+release = "cachyos-11.0-20260602-slr"
+file = "proton-cachyos-11.0-20260602-slr-x86_64_v3.tar.xz"
+sha256 = "sha256-HZmTHTziUU2nfmSTinG8qJntTweI5Xtk8SZ3BnHgpmI="
+
+[version."10.0-sunset"]
+package = "10-0-sunset"
+
+[version."10.0-sunset".download.x86_64-linux]
+release = "cachyos-10.0-sunset-slr"
+file = "proton-cachyos-10.0-sunset-slr-x86_64_v3.tar.xz"
+sha256 = "sha256-xPKJhwbzrAtwa5MBheMCv20OJxaeaOHJTEfBI2m2Eok="
+
+[version."9.0-sunset"]
+package = "9-0-sunset"
+
+[version."9.0-sunset".download.x86_64-linux]
+release = "cachyos-9.0-20250426-slr"
+file = "proton-cachyos-9.0-20250426-slr-x86_64_v3.tar.xz"
+sha256 = "sha256-9M4TmnCLiFIlcYy+wsv5s9Nbler1Qa/Cy9RYzLZ9fQM="

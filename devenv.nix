@@ -16,6 +16,7 @@
     pkgs.treefmt
     pkgs.nixfmt
     pkgs.tombi
+    pkgs.shfmt
     pkgs.yq-go
   ];
 

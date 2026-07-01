@@ -43,3 +43,9 @@ command = "tombi"
 options = ["format"]
 excludes = []
 includes = ["*.toml"]
+
+[formatter.shfmt]
+command = "shfmt"
+excludes = []
+includes = ["*.sh", "*.bash"]
+options = ["-w", "-i", "4"]

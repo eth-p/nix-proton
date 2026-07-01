@@ -7,8 +7,16 @@ before committing them.
 
 [conventional commits]: https://www.conventionalcommits.org/en/v1.0.0/#summary
 
+
 ## Formatting Changes
 
 ```bash
 devenv shell treefmt
+```
+
+
+## Updating Proton Manifests
+
+```bash
+nix develop --command bash pkgs/proton-cachyos-bin/update.sh
 ```
