@@ -34,10 +34,11 @@ manifestFile: init:
         );
 
       protonPackages = manifestsLib.forEachDownload' manifest system createProtonPackage;
+      latestPackageSupportsCurrentSystem = manifest.version ? ${manifest.proton.latest};
       latestPackage = protonPackages."${manifest.version.${manifest.proton.latest}.package}";
     in
     protonPackages
-    // {
+    // (lib.optionalAttrs latestPackageSupportsCurrentSystem {
       latest =
         latestPackage.overrideAttrs
           (oldAttrs: {
@@ -45,6 +46,6 @@ manifestFile: init:
             protonToolName = "${manifest.proton.variant}-latest";
             protonDisplayName = "${manifest.proton.name} Latest";
           });
-    }
+    })
   )
 ))

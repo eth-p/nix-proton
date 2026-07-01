@@ -57,6 +57,7 @@ stdenvNoCC.mkDerivation {
 
   # Options for changeProtonName hook:
   inherit protonDisplayName;
+  inherit protonToolName;
 
   # Proton is expected to run inside the Steam Linux Runtime.
   # Avoid patching/fixuping anything extracted from the tarball.
@@ -65,6 +66,10 @@ stdenvNoCC.mkDerivation {
   dontStrip = true;
   dontFixup = true;
   noAuditTmpdir = true;
+
+  passthru = {
+    isProton = true;
+  };
 
   meta = {
     description = "A Proton fork introducing experimental features, third-party tools and more.";
