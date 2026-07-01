@@ -20,7 +20,7 @@ stdenvNoCC.mkDerivation {
 
   src = fetchGitHubReleaseAsset (
     {
-      repo = "Cachy-OS/proton-cachyos";
+      repo = "CachyOS/proton-cachyos";
     }
     // download
   );
@@ -44,9 +44,10 @@ stdenvNoCC.mkDerivation {
 
     compatToolsDir=share/steam/compatibilitytools.d
     protonName=proton-$(head -n1 proton/version | cut -d' ' -f2 | tr -cd '[[:alnum:]\.\-]')
+    protonDirName=''${protonDirName:-$protonName}
 
     mkdir -p $out/$compatToolsDir
-    mv proton $out/$compatToolsDir/$protonName
+    mv proton $out/$compatToolsDir/$protonDirName
 
     runHook postInstall
   '';

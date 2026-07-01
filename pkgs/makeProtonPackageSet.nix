@@ -31,10 +31,17 @@ manifestFile: init:
         };
 
       protonPackages = manifestsLib.forEachDownload manifest system createProtonPackage;
+
+      normalizeName = name: lib.strings.replaceStrings [ "." ] [ "_" ] name;
+      nameNormalizedProtonPackages = lib.attrsets.mapAttrs' (
+        name: pkg: lib.nameValuePair (normalizeName name) pkg
+      ) protonPackages;
     in
-    protonPackages // {
+    nameNormalizedProtonPackages
+    // {
       latest = protonPackages."${manifest.proton.latest}".overrideAttrs (oldAttrs: {
-        protonDisplayName = "${manifest.proton.variant} Latest";
+        protonDirName = "${manifest.proton.variant}-latest";
+        protonDisplayName = "${manifest.proton.name} Latest";
       });
     }
   )
