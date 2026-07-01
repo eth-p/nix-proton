@@ -4,6 +4,10 @@
   lib,
   xz,
 
+  # From nix-proton:
+  changeProtonName,
+
+  # Overrideable options:
   suffix ? "",
 }:
 {
@@ -23,6 +27,7 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [
     xz
+    changeProtonName
   ];
 
   unpackPhase = ''
@@ -38,7 +43,7 @@ stdenvNoCC.mkDerivation {
     runHook preInstall
 
     compatToolsDir=share/steam/compatibilitytools.d
-    protonName=proton-$(head -n1 proton/version | cut -d$'\t' -f2 | tr -cd '[[:alnum:]\.\-]')
+    protonName=proton-$(head -n1 proton/version | cut -d' ' -f2 | tr -cd '[[:alnum:]\.\-]')
 
     mkdir -p $out/$compatToolsDir
     mv proton $out/$compatToolsDir/$protonName

@@ -1,4 +1,5 @@
 [proton]
+variant = "proton-cachyos"
 latest = "11.0-20260506"
 
 [version."11.0-20260506".download.x86_64-linux]

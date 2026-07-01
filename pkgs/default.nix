@@ -4,11 +4,13 @@
   newScope ? pkgs.newScope,
 }:
 lib.makeScope newScope (self: {
+  # Internal tools:
+  nixProtonTools = self.callPackage ../tools { };
+
   # Helpers that can be overridden to change how Proton is fetched/built.
-  # See project README for examples.
   fetchGitHubReleaseAsset = self.callPackage ./fetchGitHubReleaseAsset.nix { };
   makeProtonPackageSet = self.callPackage ./makeProtonPackageSet.nix { };
-  extendWithProtonPackages = self.callPackage ./extendWithProtonPackages.nix { };
+  changeProtonName = self.callPackage ./hooks/changeProtonName.nix { };
 
   # Proton package sets:
   proton-cachyos-bin = self.callPackage ./proton-cachyos-bin { };

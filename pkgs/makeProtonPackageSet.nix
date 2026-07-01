@@ -5,28 +5,37 @@
 #   makeProton: A function creating a derivation for a Proton version.
 #
 {
-  pkgs,
   lib,
 
   stdenvNoCC,
+  callPackage,
   newScope, # inherit from parent scope
 }:
 let
-  manifestsLib = pkgs.callPackage ../lib/nix/nix-proton-manifests.nix { };
-  system = pkgs.stdenv.hostPlatform.system;
+  manifestsLib = callPackage ../lib/nix/nix-proton-manifests.nix { };
+  system = stdenvNoCC.hostPlatform.system;
 in
 manifestFile: init:
-(lib.makeScope newScope init).overrideScope (
-  final: prev:
-  let
-    manifest = manifestsLib.onlyForSystem (manifestsLib.load manifestFile) system;
+(lib.makeScope newScope (
+  self:
+  (init self)
+  // (
+    let
+      manifest = manifestsLib.onlyForSystem (manifestsLib.load manifestFile) system;
 
-    createProtonPackage =
-      verName: verInfo: download:
-      prev.makeProton {
-        version = verName;
-        download = download;
-      };
-  in
-  manifestsLib.forEachDownload manifest system createProtonPackage
-)
+      createProtonPackage =
+        verName: verInfo: download:
+        self.makeProton {
+          version = verName;
+          download = download;
+        };
+
+      protonPackages = manifestsLib.forEachDownload manifest system createProtonPackage;
+    in
+    protonPackages // {
+      latest = protonPackages."${manifest.proton.latest}".overrideAttrs (oldAttrs: {
+        protonDisplayName = "${manifest.proton.variant} Latest";
+      });
+    }
+  )
+))

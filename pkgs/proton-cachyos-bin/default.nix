@@ -1,8 +1,4 @@
 {
-  pkgs,
-  lib,
-  newScope, # inherit from parent scope
-
   # From nix-proton:
   makeProtonPackageSet,
 
