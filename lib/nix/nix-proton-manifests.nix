@@ -32,11 +32,21 @@ let
     manifest: system: fn:
     lib.attrsets.mapAttrs (vName: vInfo: fn vName vInfo vInfo.download.${system}) manifest.version;
 
+
+  # Creates an attrset for each download in the manifest for the specified
+  # system.
+  #
+  # forEachDownload :: manifest -> string -> (download -> nameValuePair 'a) -> 'a
+  forEachDownload' =
+    manifest: system: fn:
+    lib.attrsets.mapAttrs' (vName: vInfo: fn vName vInfo vInfo.download.${system}) manifest.version;
+
 in
 {
   inherit
     load
     onlyForSystem
     forEachDownload
+    forEachDownload'
     ;
 }

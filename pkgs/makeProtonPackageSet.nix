@@ -25,24 +25,23 @@ manifestFile: init:
 
       createProtonPackage =
         verName: verInfo: download:
-        self.makeProton {
-          version = verName;
-          download = download;
-        };
+        lib.nameValuePair verInfo.package (
+          self.makeProton {
+            version = verName;
+            download = download;
+          }
+        );
 
-      protonPackages = manifestsLib.forEachDownload manifest system createProtonPackage;
-
-      normalizeName = name: lib.strings.replaceStrings [ "." ] [ "_" ] name;
-      nameNormalizedProtonPackages = lib.attrsets.mapAttrs' (
-        name: pkg: lib.nameValuePair (normalizeName name) pkg
-      ) protonPackages;
+      protonPackages = manifestsLib.forEachDownload' manifest system createProtonPackage;
     in
-    nameNormalizedProtonPackages
+    protonPackages
     // {
-      latest = protonPackages."${manifest.proton.latest}".overrideAttrs (oldAttrs: {
-        protonDirName = "${manifest.proton.variant}-latest";
-        protonDisplayName = "${manifest.proton.name} Latest";
-      });
+      latest =
+        protonPackages."${manifest.version.${manifest.proton.latest}.package}".overrideAttrs
+          (oldAttrs: {
+            protonDirName = "${manifest.proton.variant}-latest";
+            protonDisplayName = "${manifest.proton.name} Latest";
+          });
     }
   )
 ))
