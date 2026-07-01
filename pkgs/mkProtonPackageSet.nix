@@ -9,18 +9,19 @@
 #
 {
   pkgs,
-  newScope, # inherits from parent scope
+  lib,
+
+  newScope, # inherit from parent scope
 }:
 let
-  inherit (pkgs) lib;
-  manifests = import ../lib/nix/nix-proton-manifest.nix { inherit lib; };
+  manifestsLib = import ../lib/nix/nix-proton-manifests.nix { inherit lib; };
   system = pkgs.stdenv.hostPlatform.system;
 in
-manifestSource: init:
+manifestSrc: init:
 lib.makeScope newScope (
   self:
   let
-    manifest = manifests.load manifestSource;
+    manifest = manifestsLib.load manifestSrc;
     versions = manifest.version;
 
     # versionsForSystem :: string -> attrset

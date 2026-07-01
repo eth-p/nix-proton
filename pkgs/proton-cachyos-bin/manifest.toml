@@ -1,6 +1,9 @@
 [latest]
 version = "11.0-20260506"
 
+[version."11.0-20260506"]
+systems = ["x86_64-linux"]
+
 [version."11.0-20260506".download.x86_64-linux.default]
 release = "cachyos-11.0-20260506-slr"
 file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz"
