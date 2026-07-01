@@ -1,18 +1,26 @@
+# Creates a scoped package set containing multiple versions of Proton.
+#
+# Parameters:
+#
+#   1. A reference to the manifest.toml file.
+#
+#   2. A function to instantiate the helpers within the scope.
+#      The `mkProton` helper MUST be added to the scope.
+#
 {
   pkgs,
+  newScope, # inherits from parent scope
 }:
 let
   inherit (pkgs) lib;
+  manifests = import ../lib/nix/nix-proton-manifest.nix { inherit lib; };
   system = pkgs.stdenv.hostPlatform.system;
 in
-{
-  dir,
-  manifestFile ? "${dir}/manifest.toml",
-  manifest ? (lib.fromTOML (lib.readFile manifestFile)),
-}:
-lib.makeScope pkgs.newScope (
+manifestSource: init:
+lib.makeScope newScope (
   self:
   let
+    manifest = manifests.load manifestSource;
     versions = manifest.version;
 
     # versionsForSystem :: string -> attrset
@@ -41,9 +49,7 @@ lib.makeScope pkgs.newScope (
       in
       defaultVariant // otherVariants;
   in
-  {
-    mkProton = self.callPackage "${dir}/mkProton.nix" { };
-  }
+  (init self)
   // lib.attrsets.mapAttrs' (verName: verInfo: {
     name = verName;
     value = pivotVariants (mkProtonPackagesForVersion verName verInfo);

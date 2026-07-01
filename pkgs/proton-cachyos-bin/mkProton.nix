@@ -1,6 +1,6 @@
 {
   stdenvNoCC,
-  fetchurl,
+  fetchGitHubReleaseAsset,
   lib,
   xz,
 }:
@@ -8,38 +8,40 @@
   version,
   variant,
   download,
-  withGithubReleaseDownloadURL ? "https://github.com/CachyOS/proton-cachyos/releases/download",
 }:
 stdenvNoCC.mkDerivation {
+  pname = "proton-cachyos-bin";
   name = "proton-cachyos-bin-${version}-${variant}";
   version = version;
 
-  src = fetchurl {
-    inherit (download) sha256;
-    url = "${withGithubReleaseDownloadURL}/${download.release}/${download.file}";
-  };
+  src = fetchGitHubReleaseAsset (
+    {
+      repo = "Cachy-OS/proton-cachyos";
+    }
+    // download
+  );
 
   nativeBuildInputs = [
     xz
   ];
 
-  # unpackPhase = ''
-  #   runHook preUnpack
+  unpackPhase = ''
+    runHook preUnpack
 
-  #   mkdir proton
-  #   xz --decompress <$src | tar --directory=proton --extract --strip-components=1
+    mkdir proton
+    xz --decompress <$src | tar --directory=proton --extract --strip-components=1
 
-  #   runHook postUnpack
-  # '';
+    runHook postUnpack
+  '';
 
   installPhase = ''
     runHook preInstall
 
-    protonName="proton-$(cat version)"
-    protonDir="share/steam/compatibilitytools.d/$protonName"
+    compatToolsDir=share/steam/compatibilitytools.d
+    protonName=proton-$(head -n1 proton/version | cut -d$'\t' -f2 | tr -cd '[[:alnum:]\.\-]')
 
-    mkdir -p "$out/$protonDir"
-    mv -t "$out/$protonDir" * .*
+    mkdir -p $out/$compatToolsDir
+    mv proton $out/$compatToolsDir/$protonName
 
     runHook postInstall
   '';
@@ -48,15 +50,18 @@ stdenvNoCC.mkDerivation {
     inherit variant;
   };
 
+  # Proton is expected to run inside the Steam Linux Runtime.
+  # Avoid patching/fixuping anything extracted from the tarball.
   dontPatchELF = true;
   dontPatchShebangs = true;
+  dontStrip = true;
+  dontFixup = true;
   noAuditTmpdir = true;
 
   meta = {
     description = "A Proton fork introducing experimental features, third-party tools and more.";
     homepage = "https://github.com/CachyOS/proton-cachyos";
     platforms = lib.platforms.linux;
-    systems = [ "x86_64-linux" ];
     sourceProvenance = lib.sourceTypes.binaryNativeCode;
     license = with lib.licenses; [
       bsd3 # https://github.com/CachyOS/proton-cachyos/blob/cachyos_main/LICENSE.proton

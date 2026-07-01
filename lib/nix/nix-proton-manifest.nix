@@ -17,7 +17,15 @@ let
   #     sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A=";
   #   }
   # }
+
+
+  load =
+    src:
+    if lib.isPath src then
+      lib.fromTOML (lib.readFile src)
+    else
+      throw "unsupported manifest source type: ${builtins.typeOf src}";
 in
 {
-
+  inherit load;
 }

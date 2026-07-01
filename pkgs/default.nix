@@ -1,10 +1,12 @@
 {
-  pkgs ? (import <nixpkgs> { system = builtins.currentSystem; }),
+  pkgs ? (import <nixpkgs> { }),
 }:
-let
-  inherit (pkgs) lib;
-in
-lib.makeScope pkgs.newScope (self: {
-  mkProtonPackageSet = pkgs.callPackage ./mkProtonPackageSet.nix { };
-  proton-cachyos-bin = self.mkProtonPackageSet { dir = ./proton-cachyos-bin; };
+pkgs.lib.makeScope pkgs.newScope (self: {
+  # Helpers that can be overridden to change how Proton is fetched/built.
+  # See project README for examples.
+  mkProtonPackageSet = self.callPackage ./mkProtonPackageSet.nix { };
+  fetchGitHubReleaseAsset = self.callPackage ./fetchGitHubReleaseAsset.nix { };
+
+  # Proton package sets:
+  proton-cachyos-bin = self.callPackage ./proton-cachyos-bin { };
 })
