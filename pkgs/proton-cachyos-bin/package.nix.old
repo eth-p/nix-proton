@@ -1,0 +1,65 @@
+{
+  stdenvNoCC,
+  fetchurl,
+  lib,
+  xz,
+
+  withVersion,
+  withDownload,
+  withVariant,
+  withGithubReleaseDownloadURL ? "https://github.com/CachyOS/proton-cachyos/releases/download",
+  ...
+}: stdenvNoCC.mkDerivation
+{
+  name = "proton-cachyos-bin-${withVersion}-${withVariant}";
+  version = withVersion;
+
+  src = fetchurl {
+    inherit (withDownload) sha256;
+    url = "${withGithubReleaseDownloadURL}/${withDownload.release}/${withDownload.file}";
+  };
+
+  nativeBuildInputs = [
+    xz
+  ];
+
+  # unpackPhase = ''
+  #   runHook preUnpack
+
+  #   mkdir proton
+  #   xz --decompress <$src | tar --directory=proton --extract --strip-components=1
+
+  #   runHook postUnpack
+  # '';
+
+  installPhase = ''
+    runHook preInstall
+
+    protonName="proton-$(cat version)"
+    protonDir="share/steam/compatibilitytools.d/$protonName"
+
+    mkdir -p "$out/$protonDir"
+    mv -t "$out/$protonDir" * .*
+
+    runHook postInstall
+  '';
+
+  passthru = {
+    protonVariant = withVariant;
+  };
+
+  dontPatchELF = true;
+  dontPatchShebangs = true;
+  noAuditTmpdir = true;
+
+  meta = {
+    description = "A Proton fork introducing experimental features, third-party tools and more.";
+    homepage = "https://github.com/CachyOS/proton-cachyos";
+    platforms = lib.platforms.linux;
+    systems = ["x86_64-linux"];
+    sourceProvenance = lib.sourceTypes.binaryNativeCode;
+    license = with lib.licenses; [
+      bsd3 # https://github.com/CachyOS/proton-cachyos/blob/cachyos_main/LICENSE.proton
+    ];
+  };
+}

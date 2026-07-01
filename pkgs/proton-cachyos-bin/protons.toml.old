@@ -1,0 +1,17 @@
+[latest]
+version = "11.0-20260506"
+
+[version."11.0-20260506".x86_64-linux.default]
+release = "cachyos-11.0-20260506-slr"
+file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz"
+sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A="
+
+[version."11.0-20260506".x86_64-linux.x86_64_v3]
+release = "cachyos-11.0-20260506-slr"
+file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz"
+sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A="
+
+# dl.x86_64_v3-linux = { release = "cachyos-11.0-20260506-slr", file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz", sha256 = "" }
+# dl.x86_64-linux = { release = "cachyos-11.0-20260506-slr", file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz", sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A=" }
+# sha256 = 
+# https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-11.0-20260506-slr/proton-cachyos-11.0-20260506-slr-x86_64.tar.xz

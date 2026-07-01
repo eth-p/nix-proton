@@ -1,0 +1,64 @@
+{
+  pkgs,
+}:
+let
+  inherit (pkgs) lib;
+  system = pkgs.stdenv.hostPlatform.system;
+  protons = (lib.fromTOML (lib.readFile ./protons.toml));
+  latest = protons.latest.version;
+  versions = protons.version;
+in
+lib.makeScope pkgs.newScope (
+  self:
+  let
+    # nameForPackage = ver: variant: if variant == "default" then ver else "${ver}-${variant}";
+    # createPackagesForVersion =
+    #   ver: verInfo:
+    #   lib.mapAttrs' (variant: variantDl: {
+    #     name = nameForPackage ver variant;
+    #     value = self.callPackage ./package.nix {
+    #       withVersion = ver;
+    #       withVariant = variant;
+    #       withDownload = variantDl;
+    #     };
+    #   }) verInfo.${system};
+
+    # protonPackages = lib.concatMapAttrs (createPackagesForVersion) versions;
+    createPackagesForVersion =
+      ver: verInfo:
+      lib.mapAttrs' (variant: variantDl: {
+        name = variant;
+        value = self.callPackage ./package.nix {
+          withVersion = ver;
+          withVariant = variant;
+          withDownload = variantDl;
+        };
+      }) verInfo.${system};
+
+    protonPackages = lib.mapAttrs' (createPackagesForVersion) versions;
+  in
+  ({
+    "11.0-20260506" = (
+      self.callPackage ./package.nix {
+        withVersion = "11.0-20260506";
+        withVariant = "default";
+        withDownload = {
+          release = "cachyos-11.0-20260506-slr";
+          file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz";
+          sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A=";
+        };
+      }
+    ) // {
+      x86_64_v3 = 
+      self.callPackage ./package.nix {
+        withVersion = "11.0-20260506";
+        withVariant = "x86_64_v3";
+        withDownload = {
+release = "cachyos-11.0-20260506-slr";
+file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz";
+sha256 = "sha256-Yy9Npm5J/O1x0DyHROPRkhREa27pHihqZvL4fRtNQ9A=";
+        };
+      };
+    };
+  })
+)

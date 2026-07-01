@@ -1,0 +1,8 @@
+[latest]
+version = "11.0-20260506"
+
+[version."11.0-20260506"]
+# dl.x86_64_v3-linux = { release = "cachyos-11.0-20260506-slr", file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz", sha256 = "" }
+dl.x86_64-linux = { release = "cachyos-11.0-20260506-slr", file = "proton-cachyos-11.0-20260506-slr-x86_64.tar.xz", sha256 = "" }
+# sha256 = 
+# https://github.com/CachyOS/proton-cachyos/releases/download/cachyos-11.0-20260506-slr/proton-cachyos-11.0-20260506-slr-x86_64.tar.xz
