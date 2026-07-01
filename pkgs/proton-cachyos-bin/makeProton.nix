@@ -3,15 +3,15 @@
   fetchGitHubReleaseAsset,
   lib,
   xz,
+
+  suffix ? "",
 }:
 {
   version,
-  variant,
   download,
 }:
 stdenvNoCC.mkDerivation {
-  pname = "proton-cachyos-bin";
-  name = "proton-cachyos-bin-${version}-${variant}";
+  pname = "proton-cachyos-bin${suffix}";
   version = version;
 
   src = fetchGitHubReleaseAsset (
@@ -45,10 +45,6 @@ stdenvNoCC.mkDerivation {
 
     runHook postInstall
   '';
-
-  passthru = {
-    inherit variant;
-  };
 
   # Proton is expected to run inside the Steam Linux Runtime.
   # Avoid patching/fixuping anything extracted from the tarball.
