@@ -1,38 +1,34 @@
 {
   pkgs,
-
-  manifestFile,
-  packageFile,
 }:
 let
   inherit (pkgs) lib;
   system = pkgs.stdenv.hostPlatform.system;
-  manifest = (lib.fromTOML (lib.readFile manifestFile));
-  versions = manifest.version;
-  traceMe = x: builtins.trace x x;
-
-  # versionsForSystem :: string -> attrset
-  versionsForSystem =
-    system: lib.attrsets.filterAttrs (_: verInfo: verInfo.download ? ${system}) versions;
 in
+{
+  dir,
+  manifestFile ? "${dir}/manifest.toml",
+  manifest ? (lib.fromTOML (lib.readFile manifestFile)),
+}:
 lib.makeScope pkgs.newScope (
   self:
   let
-    # mkProtonPackage :: string -> string -> attrset -> derivation
-    mkProtonPackage =
-      verName: variant: dlInfo:
-      self.callPackage packageFile {
-        protonVersion = verName;
-        protonVariant = variant;
-        downloadInfo = dlInfo;
-      };
+    versions = manifest.version;
+
+    # versionsForSystem :: string -> attrset
+    versionsForSystem =
+      system: lib.attrsets.filterAttrs (_: verInfo: verInfo.download ? ${system}) versions;
 
     # mkProtonPackage :: string -> attrset -> attrset of derivation
     mkProtonPackagesForVersion =
       verName: verInfo:
       lib.attrsets.mapAttrs' (variant: dlInfo: {
         name = variant;
-        value = mkProtonPackage verName variant dlInfo;
+        value = self.mkProton {
+          version = verName;
+          variant = variant;
+          download = dlInfo;
+        };
       }) verInfo.download.${system};
 
     # pivotVariants :: attrset -> derivation & attrset
@@ -45,8 +41,11 @@ lib.makeScope pkgs.newScope (
       in
       defaultVariant // otherVariants;
   in
-  lib.attrsets.mapAttrs' (verName: verInfo: {
+  {
+    mkProton = self.callPackage "${dir}/mkProton.nix" { };
+  }
+  // lib.attrsets.mapAttrs' (verName: verInfo: {
     name = verName;
     value = pivotVariants (mkProtonPackagesForVersion verName verInfo);
-  }) (traceMe (versionsForSystem system))
+  }) (versionsForSystem system)
 )
