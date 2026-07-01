@@ -26,10 +26,13 @@ manifestFile: init:
       createProtonPackage =
         verName: verInfo: download:
         lib.nameValuePair verInfo.package (
-          self.makeProton {
+          (self.makeProton {
             version = verName;
             download = download;
-          }
+          }).overrideAttrs
+            {
+              protonDisplayName = "${manifest.proton.name} ${verName}";
+            }
         );
 
       protonPackages = manifestsLib.forEachDownload' manifest system createProtonPackage;
