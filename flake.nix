@@ -17,7 +17,13 @@
     {
       homeManagerModules = rec {
         default = protonfixes;
-        protonfixes = ./modules/protonfixes.nix;
+        protonfixes = ./modules/hm-protonfixes.nix;
+      };
+
+      nixosModules = {
+        proton = {
+          nixpkgs.overlays = [ self.overlays.proton ];
+        };
       };
 
       legacyPackages = forEachSystem (
@@ -44,6 +50,13 @@
         in
         lib.attrsets.concatMapAttrs extractProtons legacyPackageSets
       );
+
+      # Overlay to add this flake's packages to nixpkgs.
+      overlays = {
+        proton = (final: prev: {
+          nix-proton = self.packages.${prev.stdenvNoCC.hostPlatform.system};
+        });
+      };
 
       # The dev shell provides the necessary tools to update the Proton
       # manifests.

@@ -11,7 +11,6 @@
 {
   lib,
   makeSetupHook,
-  writeScript,
 
   # Programs used by the hook:
   jq,

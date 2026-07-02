@@ -1,7 +1,7 @@
 [proton]
 name = "Proton CachyOS"
 variant = "proton-cachyos"
-latest = "cachyos-11.0-20260602-slr"
+latest = "11.0-20260602"
 
 [version."11.0-20260602"]
 package = "11-0-20260602"

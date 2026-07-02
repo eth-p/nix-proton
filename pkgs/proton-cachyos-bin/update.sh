@@ -148,7 +148,7 @@ while next_release release; do
 
 	# If this release is the latest version, update the manifest.
 	if [[ "$release_is_latest" = "true" ]]; then
-		set_latest_version "$release_tag" manifest.toml
-		set_latest_version "$release_tag" manifest-x86-64-v3.toml
+		set_latest_version "$release_version" manifest.toml
+		set_latest_version "$release_version" manifest-x86-64-v3.toml
 	fi
 done
