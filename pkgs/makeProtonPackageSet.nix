@@ -21,7 +21,7 @@ manifestFile: init:
   (init self)
   // (
     let
-      manifest = manifestsLib.onlyForSystem (manifestsLib.load manifestFile) system;
+      manifest = manifestsLib.onlyForSystem system (manifestsLib.load manifestFile);
 
       createProtonPackage =
         verName: verInfo: download:
@@ -33,7 +33,7 @@ manifestFile: init:
           }
         );
 
-      protonPackages = manifestsLib.forEachDownload' manifest system createProtonPackage;
+      protonPackages = manifestsLib.forEachDownload' system createProtonPackage manifest;
       latestPackageSupportsCurrentSystem = manifest.version ? ${manifest.proton.latest};
       latestPackage = protonPackages."${manifest.version.${manifest.proton.latest}.package}";
     in

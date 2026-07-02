@@ -37,13 +37,32 @@
           extractProtons =
             pkgsetName: pkgset:
             let
-              renamePackages = lib.attrsets.mapAttrs' (name: pkg: lib.nameValuePair "${pkgsetName}-${name}" pkg);
+              concatPackageName = name: pkg: lib.nameValuePair "${pkgsetName}-${name}" pkg;
               protons = lib.attrsets.filterAttrs (_: isProton) pkgset;
             in
-            renamePackages protons;
+            lib.attrsets.mapAttrs' concatPackageName protons;
         in
         lib.attrsets.concatMapAttrs extractProtons legacyPackageSets
       );
+
+      # The dev shell provides the necessary tools to update the Proton
+      # manifests.
+      devShells = forEachSystem (
+        system:
+        let
+          pkgs = import nixpkgs { inherit system; };
+        in
+        {
+          default = pkgs.mkShell {
+            buildInputs = with pkgs; [
+              bash
+              yq-go
+              github-cli
+            ];
+          };
+        }
+      );
+
     };
 }
 # https://github.com/ValveSoftware/steam-for-linux/issues/6310#issuecomment-511630263
