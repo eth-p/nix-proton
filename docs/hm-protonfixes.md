@@ -20,7 +20,7 @@ Instructions and documentation for using the protonfixes [home-manager] module.
 
 ## Usage (Flakes)
 
- 1. Add `github:eth-p/nix-protonf` to the flake inputs.
+ 1. Add `github:eth-p/nix-proton` to the flake inputs.
 
     ```nix
     inputs = {

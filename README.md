@@ -5,11 +5,7 @@ for generating local protonfixes](./docs/hm-protonfixes.md).
 
 [proton-cachyos]: https://github.com/CachyOS/proton-cachyos
 
-## Usage
-
-
-
-## Packages
+## Proton Packages
 
 |Path|Proton|Platform|
 |:--|:--|:--|
@@ -21,3 +17,46 @@ for generating local protonfixes](./docs/hm-protonfixes.md).
 > `latest` as the `${version}`.
 
 To find specific versions, you can use `nix flake show github.com/eth-p/nix-proton`.
+
+## Usage (NixOS Flake)
+
+ 1. Add `github:eth-p/nix-proton` to the flake inputs.
+
+    ```nix
+    inputs = {
+      url = "github:eth-p/nix-proton";
+    };
+    ```
+
+ 2. Add `nix-proton` to the `output` function arguments.
+
+    ```nix
+    outputs = { nix-proton, ... }: {
+      # ...
+    }
+    ```
+
+ 3. Add the NixOS module to your `nixosSystem`.
+
+    ```nix
+    nixosConfigurations.my-system = nixpkgs.lib.nixosSystem {
+      modules = [
+        nix-proton.nixosModules.proton
+        # ...
+      ];
+    };
+    ```
+
+ 4. Add nix-proton packages as steam extraPkgs:
+
+    ```nix
+    # inside your device configuration module
+    programs.steam = {
+      enable = true;
+      package = pkgs.steam.override {
+        extraPkgs = pkgs': with pkgs'.nix-proton; [
+          proton-cachyos-bin-latest
+        ];
+      };
+    };
+    ```
