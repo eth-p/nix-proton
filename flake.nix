@@ -16,8 +16,14 @@
     in
     {
       homeManagerModules = rec {
-        default = protonfixes;
-        protonfixes = ./modules/hm-protonfixes.nix;
+        proton = (import ./modules/hm-proton.nix self);
+        protonfixes = (import ./modules/hm-protonfixes.nix self);
+        default = {
+          imports = [
+            proton
+            protonfixes
+          ];
+        };
       };
 
       nixosModules = {

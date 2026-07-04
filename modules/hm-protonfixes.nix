@@ -1,3 +1,4 @@
+nix-proton:
 {
   lib,
   config,

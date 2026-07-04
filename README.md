@@ -8,6 +8,7 @@ creating local protonfixes.
 
 **Home-Manager:**
 
+ - [Managing Proton installations using home-manager.](./docs/hm-proton.md)
  - [Creating local protonfixes.](./docs/hm-protonfixes.md)
 
 **NixOS:**

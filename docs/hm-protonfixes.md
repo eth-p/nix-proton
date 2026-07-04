@@ -36,7 +36,7 @@ Instructions and documentation for using the protonfixes [home-manager] module.
     }
     ```
 
- 3. Add the home-manager module to your `homeManagerConfiguration`.
+ 3. Add the `protonfixes` home-manager module to your `homeManagerConfiguration`.
 
     ```nix
     homeConfigurations.my-user = home-manager.lib.homeManagerConfiguration {
@@ -61,7 +61,7 @@ Instructions and documentation for using the protonfixes [home-manager] module.
         environmentVariables = {
           PROTON_HIDE_NVIDIA_GPU="1";
         };
-      }
+      };
     };
     ```
 
