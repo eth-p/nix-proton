@@ -48,7 +48,10 @@
             in
             lib.attrsets.mapAttrs' concatPackageName protons;
         in
-        lib.attrsets.concatMapAttrs extractProtons legacyPackageSets
+        (lib.attrsets.concatMapAttrs extractProtons legacyPackageSets)
+        // {
+          inherit (self.legacyPackages.${system}.nixProtonTools) nix-proton-link;
+        }
       );
 
       # Overlay to add this flake's packages to nixpkgs.

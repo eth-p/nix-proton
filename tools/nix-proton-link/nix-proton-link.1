@@ -1,0 +1,37 @@
+.TH NIX-PROTON-LINK 1 "July 2026" "@version@" "Nix-Proton Manual"
+.SH NAME
+nix-proton-link \- link Steam compatibility tools
+
+.SH SYNOPSIS
+.B nix-proton-link
+[\fB\-c\fR] [\fB\-t\fR \fItarget_dir\fR] [\fIsource\fR] ...
+.br
+.B nix-proton-link
+\fB\-h\fR
+
+.SH DESCRIPTION
+.B nix-proton-link
+creates symbolic links in the \fBtarget_dir\fR for every Steam compatibility
+tool found in the provided \fBsource\fR directories.
+
+.SH OPTIONS
+.TP
+.B \-c
+Remove any broken symlinks already in the \fBtarget_dir\fR.
+.TP
+.BI \-f " target_dir"
+The target directory to create the symlinks in.
+.br
+If this is not set, \fBnix-proton-link\fR will try to detect the user's
+Steam directory.
+.TP
+.B \-h
+Show the manual page.
+
+.SH EXAMPLES
+Link Proton installations from the current nix profile:
+.PP
+.RS
+.B nix-proton-link -c -t ~/.steam/root/compatibilitytools.d ~/.nix-profile/share/steam/compatibilitytools.d
+.RE
+.SH AUTHOR eth-p
