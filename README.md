@@ -23,7 +23,7 @@ creating local protonfixes.
 
 [proton-cachyos]: https://github.com/CachyOS/proton-cachyos
 
-|Path|Proton|Platform|
+|Path|Variant|Platform|
 |:--|:--|:--|
 |`packages.${system}.proton-cachyos-bin-${version}`|[proton-cachyos]|x86_64, aarch64|
 |`packages.${system}.proton-cachyos-bin-x86-64-v3-${version}`|[proton-cachyos]|x86_64|
@@ -33,3 +33,5 @@ creating local protonfixes.
 > `latest` as the `${version}`.
 
 To find the full list of packages, use `nix flake show github:eth-p/nix-proton`.
+
+To find available packages for a specific variant, use `nix search github:eth-p/nix-proton proton-cachyos-bin`.

@@ -4,6 +4,8 @@
   lib ? pkgs.lib,
   newScope ? pkgs.newScope,
 }:
-lib.makeScope newScope (self: {
-  vdf-convert = self.callPackage ./vdf-convert { };
-})
+lib.dontRecurseIntoAttrs (
+  lib.makeScope newScope (self: {
+    vdf-convert = self.callPackage ./vdf-convert { };
+  })
+)
