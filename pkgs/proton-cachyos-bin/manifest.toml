@@ -11,6 +11,11 @@ release = "cachyos-11.0-20260602-slr"
 file = "proton-cachyos-11.0-20260602-slr-x86_64.tar.xz"
 sha256 = "sha256-qC20cEi08yTC1RMu8mCXbrIf+yl1QBUpFSKzRKzmZTg="
 
+[version."11.0-20260602".download.aarch64-linux]
+release = "cachyos-11.0-20260602-slr"
+file = "proton-cachyos-11.0-20260602-slr-arm64.tar.xz"
+sha256 = "sha256-Ogf6+HIZRh6FCm1h8FgeXuesxEyKYiH7tUqFBq8bI8k="
+
 [version."10.0-sunset"]
 package = "10-0-sunset"
 
