@@ -1,10 +1,16 @@
-def release(tag: str):
+def checking_release(id: str):
     print()
-    print(f"\x1b[1;34m==> Release {tag}\x1b[m")
+    print(f"\x1b[1;34m==> Release {id}\x1b[m")
 
 
-def version(version: str):
-    print(f"\x1b[34mVersion: \x1b[m{version}")
+def checking_github_release(release: dict):
+    checking_release(release["tagName"])
+    if release["isLatest"]:
+        print("\x1b[34mThis is the latest GitHub release.\x1b[m")
+
+
+def detail(name: str, value: str):
+    print(f"\x1b[34m{name}: \x1b[m{value}")
 
 
 def caught_up():

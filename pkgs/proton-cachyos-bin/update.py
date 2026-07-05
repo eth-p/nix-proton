@@ -35,25 +35,32 @@ def add_release(release: dict, tag: str, version: str):
     print(assets)
 
 
-
 def run():
     for release in repo.get_releases():
+        feedback.checking_github_release(release)
+
         tag = release["tagName"]
         is_latest = release["isLatest"]
         version = release_tag_to_version(tag)
 
-        feedback.release(tag)
-        feedback.version(version)
+        feedback.detail("Version", version)
 
+        # If the manifest has this version as the latest already, that means it
+        # and all previous releases were processed already during a previous
+        # run of this script.
         if manifest_reg.is_latest(version):
             feedback.caught_up()
             # return
 
+        # Since it's a newer version than when the manifest was last updated,
+        # it needs to be added to the manifest.
         add_release(release, tag, version)
 
+        # If the GitHub release is marked as the latest version, the manifest
+        # needs to be updated accordingly.
         if is_latest:
-            # TODO: Update manifest
-            pass
+            manifest_reg.latest_version = version
+            manifest_x86_64_v3.latest_version = version
 
         break
     pass

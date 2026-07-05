@@ -24,7 +24,15 @@ class Manifest:
         self.data[key] = value
 
     def is_latest(self, version: str) -> bool:
-        return self.data["proton"]["latest"] == version
+        return self.latest_version == version
+
+    @property
+    def latest_version(self) -> str:
+        return self.data["proton"]["latest"]
+
+    @latest_version.setter
+    def latest_version(self, version: str) -> str:
+        self.data["proton"]["latest"] = version
 
 
 def load(file: os.PathLike) -> Manifest:
