@@ -82,9 +82,9 @@
         {
           default = pkgs.mkShell {
             buildInputs = with pkgs; [
-              bash
-              yq-go
               github-cli
+              python314
+              python314Packages.tomlkit
             ];
           };
         }
