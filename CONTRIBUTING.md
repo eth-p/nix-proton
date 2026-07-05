@@ -18,5 +18,5 @@ devenv shell treefmt
 ## Updating Proton Manifests
 
 ```bash
-nix develop --command bash pkgs/proton-cachyos-bin/update.sh
+nix develop --command pkgs/proton-cachyos-bin/update.py
 ```
