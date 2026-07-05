@@ -26,9 +26,12 @@
         };
       };
 
-      nixosModules = {
-        proton = {
-          nixpkgs.overlays = [ self.overlays.proton ];
+      nixosModules = rec {
+        proton = (import ./modules/nixos-proton.nix self);
+        default = {
+          imports = [
+            proton
+          ];
         };
       };
 

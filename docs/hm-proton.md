@@ -12,6 +12,7 @@ to add custom Proton installations to Steam.
     ```nix
     inputs = {
       url = "github:eth-p/nix-proton";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     ```
 
@@ -39,7 +40,7 @@ to add custom Proton installations to Steam.
     ```nix
     # inside your home-manager config module
     outputs = {
-      nix-proton = {
+      nix-proton.proton = {
         enable = true;
         packages = with pkgs.nix-proton; [
           proton-cachyos-bin-latest
@@ -50,12 +51,12 @@ to add custom Proton installations to Steam.
 
 ## Options
 
-> **`nix-proton.enable`** (*bool*): <br>
+> **`nix-proton.proton.enable`** (*bool*): <br>
 > Default: `false` <br>
 >
 > Install Proton packages and them to Steam.
 
-> **`nix-proton.packages`** (*list of packages*): <br>
+> **`nix-proton.proton.packages`** (*list of packages*): <br>
 > Default: `[]` <br>
 >
 > The list of Proton packages to install.
@@ -63,7 +64,7 @@ to add custom Proton installations to Steam.
 > <sub>Example:</sub>
 >
 > ```nix
-> nix-proton.packages = with pkgs.nix-proton; [
+> nix-proton.proton.packages = with pkgs.nix-proton; [
 >   proton-cachyos-bin-latest
 > ];
 > ```

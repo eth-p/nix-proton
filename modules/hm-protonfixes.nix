@@ -5,16 +5,16 @@ nix-proton:
   ...
 }:
 let
-  cfg = config.protonfixes;
+  cfg = config.nix-proton.protonfixes;
   protonfix = (import ../lib/nix/protonfix.nix) { inherit lib; };
   localfixOptionName = appid: "protonfixes.localfixes.app.${lib.strings.escapeNixIdentifier appid}";
 in
 {
-  options.protonfixes.localfixes = {
+  options.nix-proton.protonfixes.localfixes = {
     enable = lib.mkEnableOption "Create local protonfixes";
     app = lib.mkOption {
       type = lib.types.attrsOf protonfix.type;
-      description = "Local protonfixes applied to games.";
+      description = "Local protonfixes applied to games";
       default = { };
     };
   };

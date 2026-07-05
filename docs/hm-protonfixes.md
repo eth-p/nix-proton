@@ -25,6 +25,7 @@ Instructions and documentation for using the protonfixes [home-manager] module.
     ```nix
     inputs = {
       url = "github:eth-p/nix-proton";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
     ```
 
@@ -52,14 +53,16 @@ Instructions and documentation for using the protonfixes [home-manager] module.
     ```nix
     # inside your home-manager config module
     outputs = {
-      protonfixes.localfixes.enable = true;
-      protonfixes.localfixes.app."3681010" = {
+      nix-proton.protonfixes.localfixes = {
+        enable = true;
 
-        name = "Nioh 3";
-        alias = [ "4198760" ];
+        app."3681010" = {
+          name = "Nioh 3";
+          alias = [ "4198760" ];
 
-        environmentVariables = {
-          PROTON_HIDE_NVIDIA_GPU="1";
+          environmentVariables = {
+            PROTON_HIDE_NVIDIA_GPU = "1";
+          };
         };
       };
     };
@@ -67,27 +70,27 @@ Instructions and documentation for using the protonfixes [home-manager] module.
 
 ## Options
 
-> **`protonfixes.localfixes.enable`** (*bool*): <br>
+> **`nix-proton.protonfixes.localfixes.enable`** (*bool*): <br>
 > Default: `false` <br>
 >
 > Create local protonfixes.
 
-> **`protonfixes.localfixes.app.<appid>.name`** (*string*): <br>
+> **`nix-proton.protonfixes.localfixes.app.<appid>.name`** (*string*): <br>
 > *Required.* <br>
 >
 > The application name.
 
-> **`protonfixes.localfixes.app.<appid>.alias`** (*list of string*): <br>
+> **`nix-proton.protonfixes.localfixes.app.<appid>.alias`** (*list of string*): <br>
 > *Required.* <br>
 >
 > Additional app IDs for this protonfix.
 
-> **`protonfixes.localfixes.app.<appid>.environmentVariables`** (*attribute set of string*): <br>
+> **`nix-proton.protonfixes.localfixes.app.<appid>.environmentVariables`** (*attribute set of string*): <br>
 > Default: `{}` <br>
 >
 > App environment variables to override.
 
-> **`protonfixes.localfixes.app.<appid>.extraFixes`** (*lines*): <br>
+> **`nix-proton.protonfixes.localfixes.app.<appid>.extraFixes`** (*lines*): <br>
 > Default: `""` <br>
 >
 > Extra Python code to run at the end of the protonfix.

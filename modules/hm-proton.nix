@@ -7,15 +7,20 @@ nix-proton:
 }:
 let
   inherit (nix-proton.packages.${system}) nix-proton-link;
-  cfg = config.nix-proton;
+  cfg = config.nix-proton.proton;
   system = pkgs.stdenvNoCC.hostPlatform.system;
 in
 {
-  options.nix-proton = {
+  options.nix-proton.proton = {
     enable = lib.mkEnableOption "Install Proton packages and them to Steam";
     packages = lib.mkOption {
       type = with lib.types; listOf package;
       description = "The list of Proton packages to install";
+      example = lib.literalExpression ''
+        nix-proton.proton.packages = with pkgs.nix-proton; [
+          proton-cachyos-bin-latest
+        ];
+      '';
     };
   };
 
