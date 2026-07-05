@@ -11,12 +11,12 @@ subparsers.add_parser("to-json")
 subparsers.add_parser("from-json")
 
 if __name__ == "__main__":
-	args = parser.parse_args()
+    args = parser.parse_args()
 
-	if args.command == "to-json":
-		data = vdf.load(sys.stdin)
-		sys.stdout.write(json.dumps(data))
+    if args.command == "to-json":
+        data = vdf.load(sys.stdin)
+        sys.stdout.write(json.dumps(data))
 
-	elif args.command == "from-json":
-		data = json.load(sys.stdin)
-		sys.stdout.write(vdf.dumps(data).decode('utf-16'))
+    elif args.command == "from-json":
+        data = json.load(sys.stdin)
+        sys.stdout.write(vdf.dumps(data).decode("utf-16"))

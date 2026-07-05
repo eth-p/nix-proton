@@ -23,6 +23,7 @@ excludes = [
   "*.lock",
 
   # unsupported
+  "__pycache__",
   "*.md",
 ]
 
@@ -49,3 +50,9 @@ command = "shfmt"
 excludes = []
 includes = ["*.sh", "*.bash"]
 options = ["-w", "-i", "4"]
+
+[formatter.ruff]
+command = "ruff"
+excludes = []
+includes = ["*.py"]
+options = ["format"]

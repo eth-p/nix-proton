@@ -17,6 +17,7 @@
     pkgs.nixfmt
     pkgs.tombi
     pkgs.shfmt
+    pkgs.ruff
     pkgs.yq-go
   ];
 
