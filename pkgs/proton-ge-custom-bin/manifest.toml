@@ -3,7 +3,6 @@ name = "GE-Proton"
 variant = "proton-ge-custom"
 latest = "11-1"
 
-[version]
 [version.11-1]
 package = "11-1"
 
