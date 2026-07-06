@@ -56,7 +56,7 @@ def get_release_asset_nix_hash(
     """
     Gets the nix SRI hash for a release asset.
     """
-    if asset.digest.startswith("sha256:"):
+    if asset.digest is not None and asset.digest.startswith("sha256:"):
         return sha256_to_sri(asset.digest)
 
     return url_to_sri(asset.url)

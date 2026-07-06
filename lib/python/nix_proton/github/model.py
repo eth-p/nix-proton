@@ -32,7 +32,7 @@ class ReleaseAsset(_ModelBase):
         return self["url"]
 
     @property
-    def digest(self) -> str:
+    def digest(self) -> str | None:
         return self["digest"]
 
 
