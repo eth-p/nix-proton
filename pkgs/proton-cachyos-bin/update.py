@@ -82,8 +82,8 @@ def add_release(release: github.Release, version: str):
 
     if assets_added < expected_assets_per_release:
         raise Exception(
-            f"Expected at least {expected_assets_per_release},"
-            f" but only found {assets_added} (of {len(assets)})"
+            f"Expected at least {expected_assets_per_release} prebuilt"
+            f"packages, but only found {assets_added} (of {len(assets)})"
         )
 
 

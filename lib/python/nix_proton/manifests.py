@@ -67,8 +67,8 @@ class Manifest:
         return f"<nix-proton manifest @ {self.file}>"
 
     @property
-    def latest_version(self) -> str:
-        return self.data["proton"]["latest"]
+    def latest_version(self) -> str | None:
+        return self.data["proton"].get("latest", None)
 
     @latest_version.setter
     def latest_version(self, version: str) -> str:

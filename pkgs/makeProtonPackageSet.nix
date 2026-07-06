@@ -23,6 +23,7 @@ lib.recurseIntoAttrs (
     // (
       let
         manifest = manifestsLib.onlyForSystem system (manifestsLib.load manifestFile);
+        manifestNotEmpty = manifest.proton ? latest && manifest ? version;
 
         createProtonPackage =
           verName: verInfo: download:
@@ -39,7 +40,7 @@ lib.recurseIntoAttrs (
         latestPackage = protonPackages."${manifest.version.${manifest.proton.latest}.package}";
       in
       protonPackages
-      // (lib.optionalAttrs latestPackageSupportsCurrentSystem {
+      // (lib.optionalAttrs (manifestNotEmpty && latestPackageSupportsCurrentSystem) {
         latest = latestPackage.overrideAttrs (oldAttrs: {
           protonDirName = "${manifest.proton.variant}-latest";
           protonToolName = "${manifest.proton.variant}-latest";
