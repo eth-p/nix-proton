@@ -19,4 +19,5 @@ devenv shell treefmt
 
 ```bash
 nix develop --command pkgs/proton-cachyos-bin/update.py
+nix develop --command pkgs/proton-ge-custom-bin/update.py
 ```

@@ -23,11 +23,13 @@ creating local protonfixes.
 ## Proton Packages
 
 [proton-cachyos]: https://github.com/CachyOS/proton-cachyos
+[proton-ge-custom]: https://github.com/GloriousEggroll/proton-ge-custom
 
 |Path|Variant|Platform|
 |:--|:--|:--|
 |`packages.${system}.proton-cachyos-bin-${version}`|[proton-cachyos]|x86_64, aarch64|
 |`packages.${system}.proton-cachyos-bin-x86-64-v3-${version}`|[proton-cachyos]|x86_64|
+|`packages.${system}.proton-ge-custom-bin-${version}`|[proton-ge-custom]|x86_64, aarch64|
 
 >[!TIP]
 > If your selected platform has a build of the latest version, you can use

@@ -19,5 +19,7 @@ lib.recurseIntoAttrs (
       manifest = ./proton-cachyos-bin/manifest-x86-64-v3.toml;
       suffix = "x86-64-v3";
     };
+
+    proton-ge-custom-bin = self.callPackage ./proton-ge-custom-bin { };
   })
 )

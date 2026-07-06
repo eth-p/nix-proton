@@ -1,0 +1,66 @@
+[proton]
+name = "GE-Proton"
+variant = "proton-ge-custom"
+latest = "11-1"
+
+[version]
+[version.11-1]
+package = "11-1"
+
+[version.11-1.download.aarch64-linux]
+release = "GE-Proton11-1"
+file = "GE-Proton11-1-aarch64.tar.gz"
+sha256 = "sha256-zjG3PtAIcfQlcKjnITNsKtPRKiRduLZSgdMl7ww8+W0="
+
+[version.11-1.download.x86_64-linux]
+release = "GE-Proton11-1"
+file = "GE-Proton11-1.tar.gz"
+sha256 = "sha256-zm3WY+oBcloxgF7VwWVyOiU83wlFpmQpBzMHQq4t5eQ="
+
+[version.10-34]
+package = "10-sunset"
+
+[version.10-34.download.x86_64-linux]
+release = "GE-Proton10-34"
+file = "GE-Proton10-34.tar.gz"
+sha256 = "sha256-UcWAtmqDPHOZj+APBxfurFcZdlQECi8u1RiePuaNdz0="
+
+[version.9-27]
+package = "9-sunset"
+
+[version.9-27.download.x86_64-linux]
+release = "GE-Proton9-27"
+file = "GE-Proton9-27.tar.gz"
+sha256 = "sha256-u9MQi6jc8XPdKmDvTrG40H4Ps8mhBhtbkxDFNVwVGTc="
+
+[version.8-32]
+package = "8-sunset"
+
+[version.8-32.download.x86_64-linux]
+release = "GE-Proton8-32"
+file = "GE-Proton8-32.tar.gz"
+sha256 = "sha256-U+5CvBVWCFQRMtb7+KcaHx9Coj7cXg5V0EJd+e51PaA="
+
+[version.7-55]
+package = "7-sunset"
+
+[version.7-55.download.x86_64-linux]
+release = "GE-Proton7-55"
+file = "GE-Proton7-55.tar.gz"
+sha256 = "sha256-/70DtApcja+6U+Rb1lUcEyUSrW/LqRIOJfDVENDNBIU="
+
+[version."6.21-GE-2"]
+package = "6-sunset"
+
+[version."6.21-GE-2".download.x86_64-linux]
+release = "6.21-GE-2"
+file = "Proton-6.21-GE-2.tar.gz"
+sha256 = "sha256-mN6hACGuGyo+zkkANO9YgMtPd4tHPvGzOthCo52Mgx8="
+
+[version."5.9-GE-8-ST"]
+package = "5-sunset"
+
+[version."5.9-GE-8-ST".download.x86_64-linux]
+release = "5.9-GE-8-ST"
+file = "Proton-5.9-GE-8-ST.tar.gz"
+sha256 = "sha256-rf1ukRrFvfS3JURP9IFdyGiL0mLPKeGTWctQgSHQPIk="
