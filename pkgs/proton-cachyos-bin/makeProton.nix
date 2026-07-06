@@ -2,6 +2,8 @@
   stdenvNoCC,
   fetchGitHubReleaseAsset,
   lib,
+
+  gnutar,
   xz,
 
   # From nix-proton:
@@ -30,6 +32,7 @@ stdenvNoCC.mkDerivation {
 
   nativeBuildInputs = [
     xz
+    gnutar
     changeProtonName
   ];
 
