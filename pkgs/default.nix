@@ -11,6 +11,7 @@ lib.recurseIntoAttrs (
     # Helpers that can be overridden to change how Proton is fetched/built.
     fetchGitHubReleaseAsset = self.callPackage ./fetchGitHubReleaseAsset.nix { };
     makeProtonPackageSet = self.callPackage ./makeProtonPackageSet.nix { };
+    makeProtonBinDerivation = self.callPackage ./makeProtonBinDerivation.nix { };
     changeProtonName = self.callPackage ./hooks/changeProtonName.nix { };
 
     # Proton package sets:
