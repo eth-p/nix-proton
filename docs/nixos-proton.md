@@ -38,16 +38,14 @@ installations to Steam on NixOS.
     };
     ```
 
- 4. Add nix-proton packages as steam extraPkgs:
+ 4. Add nix-proton packages as steam extraCompatPackages:
 
     ```nix
     # inside your device configuration module
     programs.steam = {
       enable = true;
-      package = pkgs.steam.override {
-        extraPkgs = pkgs': with pkgs'.nix-proton; [
-          proton-cachyos-bin-latest
-        ];
-      };
+      extraCompatPackages = with pkgs.nix-proton; [
+        proton-cachyos-bin-latest
+      ];
     };
     ```
