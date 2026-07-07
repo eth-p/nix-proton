@@ -14,20 +14,18 @@ project_root = (compose([os.path.dirname] * 2))(here)
 sys.path.append(os.path.join(project_root, "lib", "python"))
 # ------------------------------------------------------------------------------
 from typing import override
-from os import path
+from os.path import join
 from nix_proton.updater import GitHubReleaseUpdater
 from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
-repo = github.get_repo("GloriousEggroll", "proton-ge-custom")
-manifest = manifests.load(path.join(here, "manifest.toml"))
 expected_assets_per_release = 2
 
 
 class Updater(GitHubReleaseUpdater):
-    def __init__(self):
-        super().__init__(repo, manifest)
+    repo = github.get_repo("GloriousEggroll", "proton-ge-custom")
+    manifest = manifests.load(join(here, "manifest.toml"))
 
     @override
     def get_version_name(self) -> str:

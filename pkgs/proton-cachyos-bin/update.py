@@ -14,24 +14,19 @@ project_root = (compose([os.path.dirname] * 2))(here)
 sys.path.append(os.path.join(project_root, "lib", "python"))
 # ------------------------------------------------------------------------------
 from typing import override
-from os import path
+from os.path import join
 from nix_proton.updater import GitHubReleaseUpdater
 from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
-repo = github.get_repo("CachyOS", "proton-cachyos")
-manifest = manifests.load(path.join(here, "manifest.toml"))
-manifest_x86_64_v3 = manifests.load(path.join(here, "manifest-x86-64-v3.toml"))
 expected_assets_per_release = 3
 
 
 class Updater(GitHubReleaseUpdater):
-    def __init__(self):
-        super().__init__(
-            repo, manifest, manifests=[manifest, manifest_x86_64_v3]
-        )
-        self.manifest_x86_64_v3 = manifest_x86_64_v3
+    repo = github.get_repo("CachyOS", "proton-cachyos")
+    manifest = manifests.load(join(here, "manifest.toml"))
+    manifest_x86_64_v3 = manifests.load(join(here, "manifest-x86-64-v3.toml"))
 
     @override
     def get_version_name(self) -> str:

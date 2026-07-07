@@ -11,9 +11,12 @@ class GitHubReleaseUpdater(ABC):
     Base class for implementing an update script based on GitHub releases.
     """
 
+    previous_latest: str
+
+    # May be defined as class attributes.
     repo: github.Repo
     manifest: manifests.Manifest
-    previous_latest: str
+    manifests: list[manifests.Manifest]
 
     # Mutated per iteration.
     releases: list[github.Release]
@@ -26,14 +29,23 @@ class GitHubReleaseUpdater(ABC):
 
     def __init__(
         self,
-        repo: github.Repo,
-        manifest: manifests.Manifest,
+        repo: github.Repo = None,
+        manifest: manifests.Manifest = None,
         manifests: list[manifests.Manifest] = None,
     ):
-        self.repo = repo
-        self.manifest = manifest
-        self.manifests = [manifest] if manifests is None else manifests
-        self.previous_latest = manifest.latest_version
+        self.repo = repo or type(self).repo
+        self.manifest = manifest or type(self).manifest
+        self.previous_latest = self.manifest.latest_version
+
+        if manifests is not None:
+            self.manifests = manifests
+
+        elif not hasattr(self, "manifests"):
+            self.manifests = [self.manifest]
+            cls = type(self)
+            for attr in dir(cls):
+                if attr.startswith("manifest_"):
+                    self.manifests.append(getattr(cls, attr))
 
     def should_process_release(self, release: github.Release) -> bool:
         """
