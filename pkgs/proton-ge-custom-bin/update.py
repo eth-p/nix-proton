@@ -20,27 +20,18 @@ from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
-expected_assets_per_release = 2
-
 
 class Updater(GitHubReleaseUpdater):
     repo = github.get_repo("GloriousEggroll", "proton-ge-custom")
     manifest = manifests.load(join(here, "manifest.toml"))
+
+    assert_num_assets_added = 2
 
     @override
     def get_version_name(self) -> str:
         v = self.release.tag
         v = v.removeprefix("GE-Proton")
         return v
-
-    @override
-    def after_assets_processsed(self):
-        if self.assets_added < expected_assets_per_release:
-            raise Exception(
-                f"Expected at least {expected_assets_per_release} prebuilt"
-                f" packages, but only found {self.assets_added}"
-                f" (of {len(self.assets)})"
-            )
 
     @override
     def process_asset(self):

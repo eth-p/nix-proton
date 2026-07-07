@@ -20,13 +20,13 @@ from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
-expected_assets_per_release = 3
-
 
 class Updater(GitHubReleaseUpdater):
     repo = github.get_repo("CachyOS", "proton-cachyos")
     manifest = manifests.load(join(here, "manifest.toml"))
     manifest_x86_64_v3 = manifests.load(join(here, "manifest-x86-64-v3.toml"))
+
+    assert_num_assets_added = 3
 
     @override
     def get_version_name(self) -> str:
@@ -34,15 +34,6 @@ class Updater(GitHubReleaseUpdater):
         v = v.removeprefix("cachyos-")
         v = v.removesuffix("-slr")
         return v
-
-    @override
-    def after_assets_processsed(self):
-        if self.assets_added < expected_assets_per_release:
-            raise Exception(
-                f"Expected at least {expected_assets_per_release} prebuilt"
-                f" packages, but only found {self.assets_added}"
-                f" (of {len(self.assets)})"
-            )
 
     @override
     def process_asset(self):

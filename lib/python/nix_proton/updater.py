@@ -18,6 +18,9 @@ class GitHubReleaseUpdater(ABC):
     manifest: manifests.Manifest
     manifests: list[manifests.Manifest]
 
+    assert_num_assets_added: int | None = None
+    assert_min_assets_added: int | None = None
+
     # Mutated per iteration.
     releases: list[github.Release]
     release: github.Release
@@ -72,7 +75,21 @@ class GitHubReleaseUpdater(ABC):
         Called after all assets have been processed.
         Use this to check that the correct number of assets were added.
         """
-        pass
+        if self.assert_num_assets_added is not None:
+            if self.assets_added != self.assert_num_assets_added:
+                raise Exception(
+                    f"Expected exactly {self.assert_num_assets_added} prebuilt"
+                    f" packages, but only found {self.assets_added}"
+                    f" (of {len(self.assets)})"
+                )
+
+        if self.assert_min_assets_added is not None:
+            if self.assets_added < self.assert_min_assets_added:
+                raise Exception(
+                    f"Expected at least {self.assert_min_assets_added} prebuilt"
+                    f" packages, but only found {self.assets_added}"
+                    f" (of {len(self.assets)})"
+                )
 
     def after_releases_processsed(self):
         """
