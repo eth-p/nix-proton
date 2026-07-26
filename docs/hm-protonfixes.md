@@ -81,7 +81,7 @@ Instructions and documentation for using the protonfixes [home-manager] module.
 > The application name.
 
 > **`nix-proton.protonfixes.localfixes.app.<appid>.alias`** (*list of string*): <br>
-> *Required.* <br>
+> Default: `[]` <br>
 >
 > Additional app IDs for this protonfix.
 
