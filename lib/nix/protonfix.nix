@@ -11,6 +11,12 @@ let
         description = "The application name.";
       };
 
+      includeGlobalFixes = lib.mkOption {
+        default = false;
+        type = lib.types.bool;
+        description = "Include the protonfixes bundled with the launched Proton version.";
+      };
+
       alias = lib.mkOption {
         default = [ ];
         type = lib.types.either (lib.types.listOf lib.types.str) (lib.types.str);
@@ -43,7 +49,34 @@ let
       setEnvironmentVar =
         name: value: "util.set_environment(${escapePythonString name}, ${escapePythonString value})";
 
+      pyImportGlobalFixFunc = ''
+        def _include_global_fix():
+            try:
+                from protonfixes.fix import get_game_id, get_module_name
+                from protonfixes.logger import log
+                from importlib.util import find_spec
+                from importlib import import_module
+
+                is_default = __name__.endswith(".default")
+                game_id = get_game_id()
+                name = get_module_name(game_id, default=is_default, local=False)
+                if find_spec(name) is None:
+                    return
+
+                mod = import_module(name)
+                if mod is None or not hasattr(mod, "main"):
+                    return
+
+                log.info(f"Including global protonfix ({game_id}) [nix-proton]")
+                mod.main()
+            except Exception as e:
+                log.warn("Error including global protonfix [nix-proton]")
+                log.warn(str(e))
+                return
+      '';
+
       fixMainBody = lib.strings.trim ''
+        ${lib.optionalString fix.includeGlobalFixes "_include_global_fix()"}
         ${lib.strings.concatMapAttrsStringSep "\n" setEnvironmentVar fix.environmentVariables}
         ${fix.extraFixes}
       '';
@@ -53,8 +86,10 @@ let
       ${escapePythonMultilineString fix.name}
       from protonfixes import util
 
+      ${lib.optionalString fix.includeGlobalFixes pyImportGlobalFixFunc}
+
       def main() -> None:
-      ${if fixMainBody == "" then "    pass" else indentPython 4 fixMainBody}
+      ${indentPython 4 (if fixMainBody == "" then "pass" else fixMainBody)}
     '';
 
   escapePythonString = s: ''"${lib.strings.replaceStrings [ "\\" "\"" ] [ "\\\\" "\\\"" ] s}"'';

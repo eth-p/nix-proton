@@ -17,6 +17,9 @@ Instructions and documentation for using the protonfixes [home-manager] module.
 > Creating a local protonfix for a game will override the built-in protonfix. <br>
 > See the [UMU-Protonfixes documentation](https://github.com/Open-Wine-Components/umu-protonfixes#local-fixes)
 > for more details.
+>
+> This behavior can be changed by setting the `includeGlobalFixes` option
+> to `true` for the localfix.
 
 ## Flake-Based Configuration
 
@@ -79,6 +82,11 @@ Instructions and documentation for using the protonfixes [home-manager] module.
 > *Required.* <br>
 >
 > The application name.
+
+> **`nix-proton.protonfixes.localfixes.app.<appid>.includeGlobalFixes`** (*bool*): <br>
+> Default: `false` <br>
+>
+> Include the protonfixes bundled with the launched Proton version.
 
 > **`nix-proton.protonfixes.localfixes.app.<appid>.alias`** (*list of string*): <br>
 > Default: `[]` <br>
