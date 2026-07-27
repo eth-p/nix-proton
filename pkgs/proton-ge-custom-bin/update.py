@@ -20,10 +20,12 @@ from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
+PDIR = os.environ.get("UPDATE_PACKAGE_DIR", here)
+
 
 class Updater(GitHubReleaseUpdater):
     repo = github.get_repo("GloriousEggroll", "proton-ge-custom")
-    manifest = manifests.load(join(here, "manifest.toml"))
+    manifest = manifests.load(join(PDIR, "manifest.toml"))
 
     assert_num_assets_added = 2
 

@@ -1,6 +1,7 @@
 from abc import ABC
 from abc import abstractmethod
 from argparse import ArgumentParser
+from os.path import dirname, abspath
 from . import git
 from . import github
 from . import manifests, manifests as _manifests
@@ -62,7 +63,7 @@ class GitHubReleaseUpdater(ABC):
 
     @property
     def manifest_files(self) -> list[str]:
-        return [m.file for m in self.manifests]
+        return [abspath(m.file) for m in self.manifests]
 
     def should_process_release(self, release: github.Release) -> bool:
         """
@@ -207,15 +208,18 @@ class GitHubReleaseUpdater(ABC):
     def run(self):
         self.args = self.args_parser.parse_args()
         self.releases = github.get_releases(self.repo)
+        git_kwargs = {
+            "repo": dirname(self.manifest.file),
+        }
 
         # If committing, ensure the repo is clean.
         if self.args.commit:
-            if git.has_changes(staged=True):
+            if git.has_changes(staged=True, **git_kwargs):
                 raise Exception(
                     "Repo has staged changes, cannot --commit updates."
                 )
 
-            if git.has_changes(paths=self.manifest_files):
+            if git.has_changes(paths=self.manifest_files, **git_kwargs):
                 raise Exception(
                     "Repo has uncommitted changes to manifest, "
                     "cannot --commit updates."
@@ -250,8 +254,11 @@ class GitHubReleaseUpdater(ABC):
             # If committing changes is enabled, do that.
             if self.args.commit:
                 self.write_manifest()
-                git.add(self.manifest_files)
-                git.commit(message=f"{self.commit_prefix}: Add {self.version}")
+                git.add(self.manifest_files, **git_kwargs)
+                git.commit(
+                    message=f"{self.commit_prefix}: Add {self.version}",
+                    **git_kwargs,
+                )
 
         # Print info about the previous-latest release.
         self._prepare_for_release(last_processed_release)

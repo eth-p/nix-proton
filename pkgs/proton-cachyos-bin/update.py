@@ -20,11 +20,13 @@ from nix_proton import manifests
 from nix_proton import feedback
 from nix_proton import github
 
+PDIR = os.environ.get("UPDATE_PACKAGE_DIR", here)
+
 
 class Updater(GitHubReleaseUpdater):
     repo = github.get_repo("CachyOS", "proton-cachyos")
-    manifest = manifests.load(join(here, "manifest.toml"))
-    manifest_x86_64_v3 = manifests.load(join(here, "manifest-x86-64-v3.toml"))
+    manifest = manifests.load(join(PDIR, "manifest.toml"))
+    manifest_x86_64_v3 = manifests.load(join(PDIR, "manifest-x86-64-v3.toml"))
 
     assert_num_assets_added = 3
 
