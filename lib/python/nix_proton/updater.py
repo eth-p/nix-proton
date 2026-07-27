@@ -1,7 +1,9 @@
 from abc import ABC
 from abc import abstractmethod
+from argparse import ArgumentParser
+from . import git
 from . import github
-from . import manifests
+from . import manifests, manifests as _manifests
 from . import feedback
 from . import nix
 
@@ -11,11 +13,14 @@ class GitHubReleaseUpdater(ABC):
     Base class for implementing an update script based on GitHub releases.
     """
 
+    args_parser: ArgumentParser  # parsed into args
+
     # May be defined as class attributes.
     repo: github.Repo
     manifest: manifests.Manifest
     manifests: list[manifests.Manifest]
 
+    commit_prefix: str = None
     assert_num_assets_added: int | None = None
     assert_min_assets_added: int | None = None
 
@@ -37,6 +42,9 @@ class GitHubReleaseUpdater(ABC):
         self.repo = repo or type(self).repo
         self.manifest = manifest or type(self).manifest
 
+        self.args_parser = ArgumentParser()
+        self.init_argparse()
+
         if manifests is not None:
             self.manifests = manifests
 
@@ -45,7 +53,16 @@ class GitHubReleaseUpdater(ABC):
             cls = type(self)
             for attr in dir(cls):
                 if attr.startswith("manifest_"):
-                    self.manifests.append(getattr(cls, attr))
+                    attr_val = getattr(cls, attr)
+                    if isinstance(attr_val, _manifests.Manifest):
+                        self.manifests.append(attr_val)
+
+        if self.commit_prefix is None:
+            self.commit_prefix = self.manifest.data["proton"]["variant"]
+
+    @property
+    def manifest_files(self) -> list[str]:
+        return [m.file for m in self.manifests]
 
     def should_process_release(self, release: github.Release) -> bool:
         """
@@ -180,8 +197,29 @@ class GitHubReleaseUpdater(ABC):
             feedback.detail("Version", self.version)
             feedback.detail("Package", self.package)
 
+    def init_argparse(self):
+        self.args_parser.add_argument(
+            "--commit",
+            action="store_true",
+            help="Create a commit for each update",
+        )
+
     def run(self):
+        self.args = self.args_parser.parse_args()
         self.releases = github.get_releases(self.repo)
+
+        # If committing, ensure the repo is clean.
+        if self.args.commit:
+            if git.has_changes(staged=True):
+                raise Exception(
+                    "Repo has staged changes, cannot --commit updates."
+                )
+
+            if git.has_changes(paths=self.manifest_files):
+                raise Exception(
+                    "Repo has uncommitted changes to manifest, "
+                    "cannot --commit updates."
+                )
 
         # Find new releases.
         last_processed_release = None
@@ -208,6 +246,12 @@ class GitHubReleaseUpdater(ABC):
             # manifest needs to be updated accordingly.
             if release.is_latest:
                 self.set_latest_version_in_manifest()
+
+            # If committing changes is enabled, do that.
+            if self.args.commit:
+                self.write_manifest()
+                git.add(self.manifest_files)
+                git.commit(message=f"{self.commit_prefix}: Add {self.version}")
 
         # Print info about the previous-latest release.
         self._prepare_for_release(last_processed_release)
