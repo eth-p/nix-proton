@@ -11,8 +11,6 @@ class GitHubReleaseUpdater(ABC):
     Base class for implementing an update script based on GitHub releases.
     """
 
-    previous_latest: str
-
     # May be defined as class attributes.
     repo: github.Repo
     manifest: manifests.Manifest
@@ -38,7 +36,6 @@ class GitHubReleaseUpdater(ABC):
     ):
         self.repo = repo or type(self).repo
         self.manifest = manifest or type(self).manifest
-        self.previous_latest = self.manifest.latest_version
 
         if manifests is not None:
             self.manifests = manifests
@@ -61,14 +58,9 @@ class GitHubReleaseUpdater(ABC):
         """
         If this returns True, the updater will stop at this release.
         """
-        # If the manifest has this version as the latest already, that means it
-        # and all previous releases were already processed during a previous
-        # run of this script.
-        if self.previous_latest == self.version:
-            feedback.caught_up()
-            return True
-        else:
-            return False
+        # If the manifest has this version already, all previous releases
+        # were already processed during a previous run of this script.
+        return self.version in self.manifest.version
 
     def after_assets_processsed(self):
         """
@@ -148,7 +140,8 @@ class GitHubReleaseUpdater(ABC):
 
     def set_latest_version_in_manifest(self):
         """
-        Sets the latest version in the manifest to the target version.
+        Sets the latest version in the manifest to the version of the
+        release currently being processed.
         """
         for manifest in self.manifests:
             manifest.latest_version = self.version
@@ -175,31 +168,39 @@ class GitHubReleaseUpdater(ABC):
 
         self.after_assets_processsed()
 
-    def run(self):
-        self.releases = github.get_releases(self.repo)
-        for release in self.releases:
-            self.release = None
-            self.version = None
-            self.package = None
-            self.assets = None
-            self.assets_added = None
-            self.asset = None
-
-            if not self.should_process_release(release):
-                continue
-
+    def _prepare_for_release(self, release: github.Release, show_feedback=True):
+        self.release = release
+        self.version = self.get_version_name()
+        self.package = self.get_package_name()
+        self.assets = None
+        self.assets_added = None
+        self.asset = None
+        if show_feedback:
             feedback.checking_github_release(release)
-            self.release = release
-            self.version = self.get_version_name()
-            self.package = self.get_package_name()
             feedback.detail("Version", self.version)
             feedback.detail("Package", self.package)
 
+    def run(self):
+        self.releases = github.get_releases(self.repo)
+
+        # Find new releases.
+        last_processed_release = None
+        releases_to_process = []
+        for release in self.releases:
+            self._prepare_for_release(release, show_feedback=False)
+            if not self.should_process_release(release):
+                continue
+
             if self.should_stop():
+                last_processed_release = release
                 break
 
-            # Since it's a newer version than when the manifest was last
-            # updated, it needs to be added to the manifest.
+            releases_to_process.append(release)
+
+        # And process them from oldest to newest.
+        for release in reversed(releases_to_process):
+            self._prepare_for_release(release)
+
             self.add_version_to_manifest()
             self.process_release()
 
@@ -208,5 +209,10 @@ class GitHubReleaseUpdater(ABC):
             if release.is_latest:
                 self.set_latest_version_in_manifest()
 
+        # Print info about the previous-latest release.
+        self._prepare_for_release(last_processed_release)
+        feedback.caught_up()
+
+        # Write the changes.
         self.after_releases_processsed()
         self.write_manifest()
