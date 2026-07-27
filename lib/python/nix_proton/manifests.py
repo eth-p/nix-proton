@@ -1,8 +1,11 @@
 import tomlkit
 import os
 import subprocess
+from datetime import datetime
 
 from .nix import normalize_package_name
+
+_dateformat = "%Y-%m-%dT%H:%M:%SZ"
 
 
 class _ModelBase:
@@ -90,7 +93,7 @@ class ManifestVersions(_ContainerBase):
     def __repr__(self) -> str:
         return f"<nix-proton manifest.version: {self.data}>"
 
-    def setup(self, version: str, package=None) -> "Version":
+    def setup(self, version: str, package=None, date=None) -> "Version":
         """
         Creates a new version entry in the manifest for the specified version
         if it doesn't already exist.
@@ -99,6 +102,8 @@ class ManifestVersions(_ContainerBase):
         version_obj = self[version]
         if version_obj.package is None:
             version_obj.package = package or normalize_package_name(version)
+        if version_obj.date is None and date is not None:
+            version_obj.date = date
         return self[version]
 
 
@@ -115,12 +120,23 @@ class Version(_ModelBase):
         return self.data.get("package", None)
 
     @property
+    def date(self) -> "datetime.date" | None:
+        date_str = self.data.get("date", None)
+        if date_str is None:
+            return None
+        return datetime.strptime(date_str, _dateformat)
+
+    @property
     def download(self) -> str | None:
         return VersionDownload(self.data.setdefault("download", {}))
 
     @package.setter
     def package(self, name: str) -> str:
         self["package"] = name
+
+    @date.setter
+    def date(self, date: "datetime.date"):
+        self["date"] = date.strftime(_dateformat)
 
     def set_download(self, system: str, data: any):
         self.data.setdefault("download", {})[system] = data

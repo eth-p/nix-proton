@@ -122,7 +122,11 @@ class GitHubReleaseUpdater(ABC):
         Adds the target version to all manifests if it doesn't already exist.
         """
         for manifest in self.manifests:
-            manifest.version.setup(self.version, package=self.package)
+            manifest.version.setup(
+                self.version,
+                package=self.package,
+                date=self.release.published_at,
+            )
 
     def add_download_to_manifest(
         self, system: str, manifest: manifests.Manifest = None

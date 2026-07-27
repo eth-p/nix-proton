@@ -51,7 +51,7 @@ class Release(_ModelBase):
 
     @property
     @cache
-    def published_at(self) -> str:
+    def published_at(self) -> "datetime.date":
         return datetime.strptime(self["publishedAt"], "%Y-%m-%dT%H:%M:%SZ")
 
 
