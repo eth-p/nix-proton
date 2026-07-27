@@ -1,0 +1,141 @@
+name: Proton Update
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: "0 23 * * *"
+
+env:
+  THE_MERGED_BRANCH: ${{ github.event.repository.default_branch }}
+  THE_STAGING_BRANCH: update
+
+jobs:
+
+  # Rebases a staging branch to ensure it's mergeable with the default branch.
+  rebase-update-branch:
+    name: "Rebase Update Branch"
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: ./.github/actions/rebase-branch
+        with:
+          head-branch: "${{ env.THE_STAGING_BRANCH }}"
+          base-branch: "${{ env.THE_MERGED_BRANCH }}"
+
+  # Fetches the latest Proton version information and creates git patches.
+  fetch-updates:
+    name: "Check"
+    runs-on: ubuntu-latest
+    needs:
+      - rebase-update-branch
+    permissions:
+      contents: read
+    strategy:
+      fail-fast: false
+      matrix:
+        proton:
+          - proton-cachyos-bin
+          # - proton-ge-custom-bin
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Checkout the staging branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.THE_STAGING_BRANCH }}
+          path: _staging
+
+      - uses: ./.github/actions/setup-environment
+        id: env
+
+      - name: Run the update script
+        env:
+          GH_TOKEN: ${{ github.token }}
+          UPDATE_PACKAGE_DIR: _staging/pkgs/${{ matrix.proton }}
+          UPDATE_SCRIPT: pkgs/${{ matrix.proton }}/update.py
+        run: |-
+          set -euo pipefail
+          source "${{ steps.env.outputs.profile }}"
+          python3 "${UPDATE_SCRIPT}" --commit
+
+      - name: Export the commits
+        id: export-changes
+        run: |-
+          set -euo pipefail
+          source "${{ steps.env.outputs.profile }}"
+
+          prev_sha=$(git -C _staging rev-parse "origin/${THE_STAGING_BRANCH}")
+          current_sha=$(git -C _staging rev-parse "HEAD")
+
+          if [[ "${prev_sha}" = "${current_sha}" ]]; then
+            echo "Nothing to update."
+            echo "anything=false" >>"$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Create the patches.
+          git -C _staging format-patch "$prev_sha"
+          echo "anything=true" >>"$GITHUB_OUTPUT"
+
+      - name: Upload commits
+        if: "${{ steps.export-changes.outputs.anything == 'true' }}"
+        uses: actions/upload-artifact@v7
+        with:
+          name: "commits-${{ matrix.proton }}"
+          path: _staging/*.patch
+
+  # Commits the patches and pushes them to the staging branch.
+  apply-updates:
+    name: "Commit and Push"
+    runs-on: ubuntu-latest
+    needs:
+      - rebase-update-branch
+      - fetch-updates
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Checkout the staging branch
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ env.THE_STAGING_BRANCH }}
+          path: _staging
+
+      - uses: ./.github/actions/setup-environment
+        id: env
+
+      - uses: actions/download-artifact@v7
+        with:
+          pattern: "commits-*"
+          path: _patches
+
+      - name: Find commits to apply
+        id: check
+        run: |-
+          set -euo pipefail
+
+          mkdir -p _patches
+          if read -r _ < <(find _patches -iname '*.patch'); then
+            echo "has-update=true" >>"$GITHUB_OUTPUT"
+          else
+            echo "has-update=false" >>"$GITHUB_OUTPUT"
+          fi
+
+      - name: Apply commits
+        if: "${{ steps.check.outputs.has-update == 'true' }}"
+        run: |-
+          set -euo pipefail
+          cd _staging
+          find ../_patches -iname '*.patch' \
+            | sort \
+            | xargs --no-run-if-empty git am
+
+      - name: Push commits
+        if: "${{ steps.check.outputs.has-update == 'true' }}"
+        run: |-
+          set -euo pipefail
+          cd _staging
+          git push

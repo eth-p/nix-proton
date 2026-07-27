@@ -1,0 +1,44 @@
+name: "Setup Environments"
+description: "Sets up the CI environment based on the flake develop profile."
+inputs:
+  flake:
+    description: "The flake ref."
+    required: false
+    default: "."
+
+outputs:
+  profile:
+    description: "Path to a file that can be sourced to load the environment."
+    value: "${{ steps.setup.outputs.profile-file }}"
+
+runs:
+  using: "composite"
+  steps:
+    - name: "Install nix"
+      uses: cachix/install-nix-action@v31.11.0
+
+    - name: "Configure git"
+      shell: bash
+      run: |-
+        git config --global user.name "GitHub Actions"
+        git config --global user.email "ci@eth-p.dev"
+
+    - name: "Set up CI environment with flake develop profile"
+      id: setup
+      shell: bash
+      env:
+        FLAKE: "${{ inputs.flake }}"
+      run: |-
+        set -euo pipefail
+
+        # Create the profile file.
+        profile_file=$(mktemp --suffix '.bash')
+        printf "profile-file=%s\n" "${profile_file}" >>"$GITHUB_OUTPUT"
+        nix develop "$FLAKE" --command bash -c 'nix print-dev-env >"$1"' -- "${profile_file}"
+
+        # Export the PATH to the GITHUB_PATH.
+        ({
+          #shellcheck disable=SC1090
+          source "$profile_file"
+          tr ':' '\n' <<<"$PATH" >>"$GITHUB_PATH"
+        })
