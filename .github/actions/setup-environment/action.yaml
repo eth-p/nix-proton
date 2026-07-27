@@ -20,7 +20,7 @@ runs:
     - name: "Configure git"
       shell: bash
       run: |-
-        git config --global user.name "GitHub Actions"
+        git config --global user.name "github-actions[bot]"
         git config --global user.email "ci@eth-p.dev"
 
     - name: "Set up CI environment with flake develop profile"
