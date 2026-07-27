@@ -37,7 +37,7 @@ jobs:
       matrix:
         proton:
           - proton-cachyos-bin
-          # - proton-ge-custom-bin
+          - proton-ge-custom-bin
     steps:
       - uses: actions/checkout@v7
 
