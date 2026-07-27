@@ -1,6 +1,7 @@
 name: Proton Update
 
 on:
+  push: {}
   workflow_dispatch: {}
   schedule:
     - cron: "0 23 * * *"
@@ -95,6 +96,7 @@ jobs:
       - fetch-updates
     permissions:
       contents: write
+      pull-requests: write
     steps:
       - uses: actions/checkout@v7
 
@@ -133,9 +135,14 @@ jobs:
             | sort \
             | xargs --no-run-if-empty git am
 
-      - name: Push commits
+      - name: Create/update pull request
+        uses: peter-evans/create-pull-request@v8
         if: "${{ steps.check.outputs.has-update == 'true' }}"
-        run: |-
-          set -euo pipefail
-          cd _staging
-          git push
+        with:
+          path: _staging
+          branch: "${{ env.THE_STAGING_BRANCH }}"
+          base: "${{ env.THE_MERGED_BRANCH }}"
+          title: "[Update] Update Proton Versions"
+          body: "See commits for changes."
+          labels: |-
+            ci
