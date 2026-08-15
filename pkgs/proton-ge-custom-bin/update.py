@@ -41,7 +41,7 @@ class Updater(GitHubReleaseUpdater):
         tag = self.release.tag
 
         # x86_64-linux
-        if file == f"{tag}.tar.gz":
+        if file == f"{tag}.tar.gz" or file == f"{tag}-x86_64.tar.gz":
             self.add_download_to_manifest(system="x86_64-linux")
             return
 
