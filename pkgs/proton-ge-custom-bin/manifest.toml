@@ -1,7 +1,7 @@
 [proton]
 name = "GE-Proton"
 variant = "proton-ge-custom"
-latest = "11-7"
+latest = "11-9"
 
 [version.11-1]
 package = "11-1"
@@ -146,3 +146,17 @@ sha256 = "sha256-GVo+BihmjUEy+CT5PBniIsm7frkwlovjxvTWZrVlSAM="
 release = "GE-Proton11-8"
 file = "GE-Proton11-8-x86_64.tar.gz"
 sha256 = "sha256-27ISnLzs5l3NnZJtvdfQ/8R080/6uYfdxquM5SU32XY="
+
+[version.11-9]
+package = "11-9"
+date = "2026-10-14T00:14:59Z"
+
+[version.11-9.download.aarch64-linux]
+release = "GE-Proton11-9"
+file = "GE-Proton11-9-aarch64.tar.gz"
+sha256 = "sha256-lIlX6okpuKG0RMi5J4+Ht8ugAGzP7lHNVRq2lVXDQmU="
+
+[version.11-9.download.x86_64-linux]
+release = "GE-Proton11-9"
+file = "GE-Proton11-9-x86_64.tar.gz"
+sha256 = "sha256-ss9KYypw7DIc25kE+jlqKkXUBhEp+f3InYon6lzuudY="
