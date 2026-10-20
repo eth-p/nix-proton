@@ -160,3 +160,17 @@ sha256 = "sha256-lIlX6okpuKG0RMi5J4+Ht8ugAGzP7lHNVRq2lVXDQmU="
 release = "GE-Proton11-9"
 file = "GE-Proton11-9-x86_64.tar.gz"
 sha256 = "sha256-ss9KYypw7DIc25kE+jlqKkXUBhEp+f3InYon6lzuudY="
+
+[version.11-10]
+package = "11-10"
+date = "2026-10-19T06:21:57Z"
+
+[version.11-10.download.aarch64-linux]
+release = "GE-Proton11-10"
+file = "GE-Proton11-10-aarch64.tar.gz"
+sha256 = "sha256-DScCX0kDKZ4xJR2D6qaYG48KliGBCKc1pDZR8EfbDcw="
+
+[version.11-10.download.x86_64-linux]
+release = "GE-Proton11-10"
+file = "GE-Proton11-10-x86_64.tar.gz"
+sha256 = "sha256-PCbulnNc6fQt4BjbT4KrM+J18ZFQ1s6iXqeTe38lMN0="
