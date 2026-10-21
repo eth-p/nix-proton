@@ -1,7 +1,7 @@
 [proton]
 name = "Proton-CachyOS (x86_64_v3)"
 variant = "proton-cachyos-x86-64-v3"
-latest = "11.0-20261014"
+latest = "11.0-20261015"
 
 [version."11.0-20260602"]
 package = "11-0-20260602"
@@ -60,3 +60,12 @@ date = "2026-10-17T22:48:11Z"
 release = "cachyos-11.0-20261014-slr"
 file = "proton-cachyos-11.0-20261014-slr-x86_64_v3.tar.xz"
 sha256 = "sha256-e+3LIeFOx5/p8mxXpS5vcqzCcIbITGTtwDB7PQoURHo="
+
+[version."11.0-20261015"]
+package = "11-0-20261015"
+date = "2026-10-20T21:21:40Z"
+
+[version."11.0-20261015".download.x86_64-linux]
+release = "cachyos-11.0-20261015-slr"
+file = "proton-cachyos-11.0-20261015-slr-x86_64_v3.tar.xz"
+sha256 = "sha256-TxJb19LHJNx9LQVTykLxjGcCKmAG6GKf5/eNFgqevfs="
